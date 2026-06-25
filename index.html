@@ -846,13 +846,17 @@
 </div>
 
 <script>
-  // ── STORAGE ──────────────────────────────────────────────────────────
-  function getAppointments() {
-    try { return JSON.parse(localStorage.getItem('ps_appointments') || '[]'); }
-    catch { return []; }
+  // ── STORAGE (shared across all devices via window.storage) ───────────
+  async function getAppointments() {
+    try {
+      const result = await window.storage.get('ps_appointments', true);
+      return result ? JSON.parse(result.value) : [];
+    } catch { return []; }
   }
-  function saveAppointments(arr) {
-    localStorage.setItem('ps_appointments', JSON.stringify(arr));
+  async function saveAppointments(arr) {
+    try {
+      await window.storage.set('ps_appointments', JSON.stringify(arr), true);
+    } catch(e) { console.error('Storage save error:', e); }
   }
 
   // ── PAGES ─────────────────────────────────────────────────────────────
@@ -952,10 +956,11 @@
 
   const ALL_SLOTS = ['8:00 AM','9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
 
-  function renderTimeSlots() {
+  async function renderTimeSlots() {
     const container = document.getElementById('time-slots-container');
     if (!selectedDate) { container.innerHTML = '<div class="no-date">Select a date above.</div>'; return; }
-    const appts = getAppointments();
+    container.innerHTML = '<div class="no-date">Loading times…</div>';
+    const appts = await getAppointments();
     const takenTimes = appts.filter(a => a.date === selectedDate).map(a => a.time);
     container.innerHTML = '<div class="time-slots"></div>';
     const grid = container.querySelector('.time-slots');
@@ -994,7 +999,7 @@
     }
   }
 
-  function confirmBooking() {
+  async function confirmBooking() {
     if (!selectedDate || !selectedTime) { alert('Please select a date and time.'); return; }
     const phone = document.getElementById('inp-phone').value.trim();
     const address = document.getElementById('inp-address').value.trim();
@@ -1002,6 +1007,9 @@
     if (!address) { alert('Please enter your service address.'); return; }
     const vehicle = document.getElementById('inp-vehicle').value.trim();
     const notes = document.getElementById('inp-notes').value.trim();
+
+    const btn = document.getElementById('btn-confirm');
+    btn.disabled = true; btn.textContent = 'Saving…';
 
     const appt = {
       id: Date.now(),
@@ -1013,14 +1021,17 @@
       notes,
       booked: new Date().toISOString()
     };
-    const appts = getAppointments();
-    // Double-booking check
+    const appts = await getAppointments();
+    // Double-booking check (re-fetch to catch concurrent bookings)
     if (appts.find(a => a.date === selectedDate && a.time === selectedTime)) {
-      alert('That time slot was just taken! Please pick another.'); renderTimeSlots(); return;
+      alert('That time slot was just taken! Please pick another.');
+      btn.disabled = false; btn.textContent = '📅 Book Appointment';
+      renderTimeSlots(); return;
     }
     appts.push(appt);
-    saveAppointments(appts);
+    await saveAppointments(appts);
 
+    btn.disabled = false; btn.textContent = '📅 Book Appointment';
     const dateLabel = new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
     document.getElementById('success-msg').textContent =
       `Your ${selectedPackage} is booked for ${dateLabel} at ${selectedTime}. We'll see you at ${address}!`;
@@ -1067,23 +1078,24 @@
   }
   function adminGoToday() { adminViewDate = new Date(); renderAdmin(); }
 
-  function renderAdmin() {
+  async function renderAdmin() {
     const ds = dateStr(adminViewDate);
     document.getElementById('admin-date-display').textContent =
       adminViewDate.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
 
-    const appts = getAppointments().filter(a => a.date === ds);
+    document.getElementById('admin-stats').innerHTML = `<div class="stat-card"><div class="stat-num">…</div><div class="stat-label">Loading</div></div>`;
+    document.getElementById('appt-list').innerHTML = '';
+
+    const allAppts = await getAppointments();
+    const appts = allAppts.filter(a => a.date === ds);
     appts.sort((a,b) => ALL_SLOTS.indexOf(a.time) - ALL_SLOTS.indexOf(b.time));
 
-    // Stats
-    const allAppts = getAppointments();
     const todayDs = dateStr(new Date());
-    const todayCount = allAppts.filter(a => a.date === todayDs).length;
+    const upcomingCount = allAppts.filter(a => a.date >= todayDs).length;
     const totalCount = allAppts.length;
-    const upcomingCount = allAppts.filter(a => a.date >= dateStr(new Date())).length;
 
     document.getElementById('admin-stats').innerHTML = `
-      <div class="stat-card"><div class="stat-num">${appts.length}</div><div class="stat-label">Today's Jobs</div></div>
+      <div class="stat-card"><div class="stat-num">${appts.length}</div><div class="stat-label">This Day's Jobs</div></div>
       <div class="stat-card"><div class="stat-num">${upcomingCount}</div><div class="stat-label">Upcoming</div></div>
       <div class="stat-card"><div class="stat-num">${totalCount}</div><div class="stat-label">Total Booked</div></div>
     `;
@@ -1116,9 +1128,10 @@
     `).join('');
   }
 
-  function deleteAppt(id) {
+  async function deleteAppt(id) {
     if (!confirm('Cancel this appointment?')) return;
-    saveAppointments(getAppointments().filter(a => a.id !== id));
+    const appts = await getAppointments();
+    await saveAppointments(appts.filter(a => a.id !== id));
     renderAdmin();
   }
 
