@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pure Shine Detailing</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0A1628;
+    --ocean: #1E4D8C;
+    --aqua: #4ABFDF;
+    --foam: #F0F8FF;
+    --pearl: #E8F4F8;
+    --gold: #F5C842;
+    --mid: #2A6DB5;
+    --light-blue: #7DD4F0;
+    --text-dark: #0A1628;
+    --text-muted: #4A6080;
+    --white: #ffffff;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--foam);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── PAGES ─── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10, 22, 40, 0.95);
+    backdrop-filter: blur(12px);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+    border-bottom: 1px solid rgba(74, 191, 223, 0.2);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--white);
+    letter-spacing: 2px;
+    cursor: pointer;
+  }
+  .nav-logo span { color: var(--aqua); }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    color: rgba(255,255,255,0.7); text-decoration: none;
+    font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px;
+    transition: color 0.2s; cursor: pointer;
+  }
+  .nav-links a:hover { color: var(--aqua); }
+  .nav-admin {
+    background: transparent; border: 1px solid var(--aqua);
+    color: var(--aqua); padding: 0.4rem 1rem;
+    border-radius: 4px; font-size: 0.8rem; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    transition: all 0.2s;
+  }
+  .nav-admin:hover { background: var(--aqua); color: var(--navy); }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative; min-height: 100vh;
+    background: linear-gradient(160deg, var(--navy) 0%, #0D2547 40%, #1a3a6b 70%, #0e4070 100%);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; padding-top: 64px;
+  }
+
+  /* Soap bubbles */
+  .bubbles {
+    position: absolute; inset: 0; pointer-events: none;
+  }
+  .bubble {
+    position: absolute; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), rgba(74,191,223,0.1) 40%, transparent 70%);
+    border: 1px solid rgba(74,191,223,0.3);
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0% { transform: translateY(110vh) scale(0.8); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-20vh) scale(1.1); opacity: 0; }
+  }
+
+  /* Water ripple at bottom */
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -2px; left: 0; right: 0; height: 80px;
+    background: var(--foam);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center; max-width: 780px; padding: 2rem;
+  }
+  .hero-eyebrow {
+    font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--aqua); font-weight: 600; margin-bottom: 1.2rem;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    line-height: 0.95; color: var(--white);
+    letter-spacing: 3px; margin-bottom: 1.5rem;
+  }
+  .hero-title span { color: var(--aqua); }
+  .hero-subtitle {
+    font-size: 1.1rem; color: rgba(255,255,255,0.65);
+    font-weight: 300; line-height: 1.7; max-width: 520px;
+    margin: 0 auto 2.5rem;
+  }
+  .hero-cta {
+    display: inline-flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+  }
+  .btn-primary {
+    background: var(--aqua); color: var(--navy);
+    padding: 0.9rem 2.2rem; border: none; border-radius: 4px;
+    font-family: 'Inter', sans-serif; font-weight: 700;
+    font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.25s;
+    box-shadow: 0 0 30px rgba(74,191,223,0.35);
+  }
+  .btn-primary:hover {
+    background: var(--white); transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(74,191,223,0.5);
+  }
+  .btn-outline {
+    background: transparent; color: var(--white);
+    padding: 0.9rem 2.2rem; border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: 0.9rem; cursor: pointer; transition: all 0.25s;
+  }
+  .btn-outline:hover { border-color: var(--aqua); color: var(--aqua); }
+
+  /* ─── PACKAGES SECTION ─── */
+  .packages {
+    padding: 6rem 2rem;
+    background: var(--foam);
+    position: relative;
+  }
+  .section-header {
+    text-align: center; margin-bottom: 1rem;
+  }
+  .section-eyebrow {
+    font-size: 0.72rem; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--aqua); font-weight: 600; margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    color: var(--navy); letter-spacing: 2px; margin-bottom: 0.5rem;
+  }
+  .section-sub {
+    color: var(--text-muted); font-size: 0.95rem; max-width: 520px;
+    margin: 0 auto; line-height: 1.6;
+  }
+
+  .pricing-note {
+    text-align: center;
+    background: linear-gradient(135deg, rgba(74,191,223,0.1), rgba(30,77,140,0.08));
+    border: 1px solid rgba(74,191,223,0.25);
+    border-radius: 8px;
+    padding: 0.9rem 1.5rem;
+    margin: 1.5rem auto 3.5rem;
+    max-width: 600px;
+    font-size: 0.85rem;
+    color: var(--ocean);
+    font-weight: 500;
+  }
+  .pricing-note strong { color: var(--navy); }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem; max-width: 1000px; margin: 0 auto;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2.2rem;
+    border: 1px solid rgba(74,191,223,0.2);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: var(--aqua);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(10,22,40,0.12); }
+  .card:hover::before { transform: scaleX(1); }
+  .card.featured {
+    background: linear-gradient(160deg, var(--navy) 0%, var(--ocean) 100%);
+    border-color: var(--aqua);
+    box-shadow: 0 8px 40px rgba(10,22,40,0.2);
+  }
+  .card.featured::before { transform: scaleX(1); background: var(--gold); }
+  .card-badge {
+    display: inline-block;
+    background: var(--gold); color: var(--navy);
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; padding: 0.25rem 0.7rem;
+    border-radius: 20px; margin-bottom: 1rem;
+  }
+  .card-icon {
+    font-size: 2rem; margin-bottom: 1rem; line-height: 1;
+  }
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem; letter-spacing: 2px;
+    color: var(--navy); margin-bottom: 0.4rem;
+  }
+  .card.featured .card-title { color: var(--white); }
+  .card-price {
+    font-size: 2rem; font-weight: 700; color: var(--aqua);
+    margin-bottom: 1.2rem;
+  }
+  .card-price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
+  .card.featured .card-price span { color: rgba(255,255,255,0.5); }
+  .card-features {
+    list-style: none; margin-bottom: 1.8rem;
+  }
+  .card-features li {
+    padding: 0.45rem 0; font-size: 0.88rem;
+    color: var(--text-muted); border-bottom: 1px solid rgba(74,191,223,0.1);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .card-features li:last-child { border-bottom: none; }
+  .card.featured .card-features li { color: rgba(255,255,255,0.75); border-bottom-color: rgba(255,255,255,0.08); }
+  .card-features li::before { content: '✓'; color: var(--aqua); font-weight: 700; font-size: 0.8rem; flex-shrink: 0; }
+  .btn-book {
+    width: 100%; padding: 0.85rem;
+    background: var(--aqua); color: var(--navy);
+    border: none; border-radius: 6px;
+    font-family: 'Inter', sans-serif; font-weight: 700;
+    font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.25s;
+  }
+  .btn-book:hover { background: var(--mid); color: var(--white); }
+  .card.featured .btn-book { background: var(--gold); }
+  .card.featured .btn-book:hover { background: #e0b530; }
+
+  /* ─── WHY US ─── */
+  .why {
+    background: linear-gradient(160deg, var(--navy), #0D2547);
+    padding: 5rem 2rem;
+    color: var(--white);
+    text-align: center;
+  }
+  .why .section-title { color: var(--white); }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem; max-width: 900px; margin: 3rem auto 0;
+  }
+  .why-item { padding: 1.5rem; }
+  .why-icon { font-size: 2.2rem; margin-bottom: 0.8rem; }
+  .why-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem; letter-spacing: 1px; color: var(--aqua);
+    margin-bottom: 0.4rem;
+  }
+  .why-desc { font-size: 0.85rem; color: rgba(255,255,255,0.55); line-height: 1.5; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--navy);
+    padding: 2rem;
+    text-align: center;
+    color: rgba(255,255,255,0.35);
+    font-size: 0.8rem;
+    border-top: 1px solid rgba(74,191,223,0.1);
+  }
+  footer span { color: var(--aqua); }
+
+  /* ─── BOOKING PAGE ─── */
+  .booking-page {
+    padding-top: 64px;
+    min-height: 100vh;
+    background: var(--foam);
+  }
+  .booking-header {
+    background: linear-gradient(160deg, var(--navy), var(--ocean));
+    padding: 3rem 2rem 4rem;
+    text-align: center;
+    color: var(--white);
+    position: relative;
+  }
+  .booking-header::after {
+    content: '';
+    position: absolute; bottom: -2px; left: 0; right: 0; height: 50px;
+    background: var(--foam);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+  .booking-header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem); letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+  }
+  .booking-header p { color: rgba(255,255,255,0.65); font-size: 0.95rem; }
+  .selected-package {
+    display: inline-block;
+    background: rgba(74,191,223,0.15);
+    border: 1px solid var(--aqua);
+    color: var(--aqua);
+    padding: 0.3rem 1rem; border-radius: 20px;
+    font-size: 0.8rem; font-weight: 600; margin-top: 0.8rem;
+  }
+
+  .booking-body {
+    max-width: 900px; margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 2.5rem;
+  }
+  @media (max-width: 700px) {
+    .booking-body { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+    .nav-links a:not(:last-child) { display: none; }
+  }
+
+  .booking-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.8rem;
+    border: 1px solid rgba(74,191,223,0.2);
+    height: fit-content;
+  }
+  .booking-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem; letter-spacing: 1px;
+    color: var(--navy); margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid var(--aqua);
+  }
+
+  /* Calendar */
+  .cal-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .cal-month {
+    font-weight: 600; font-size: 0.95rem; color: var(--navy);
+  }
+  .cal-arrow {
+    background: none; border: 1px solid rgba(74,191,223,0.3);
+    color: var(--ocean); width: 30px; height: 30px;
+    border-radius: 4px; cursor: pointer; font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  .cal-arrow:hover { background: var(--aqua); color: var(--navy); border-color: var(--aqua); }
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 3px; margin-bottom: 1.2rem;
+  }
+  .cal-day-label {
+    text-align: center; font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 1px; color: var(--text-muted); padding: 0.3rem 0;
+  }
+  .cal-day {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    border-radius: 6px; font-size: 0.82rem; cursor: pointer;
+    transition: all 0.15s; font-weight: 500; color: var(--text-dark);
+  }
+  .cal-day:hover:not(.disabled):not(.empty) { background: var(--pearl); }
+  .cal-day.selected { background: var(--aqua); color: var(--navy); font-weight: 700; }
+  .cal-day.today { border: 1.5px solid var(--aqua); color: var(--ocean); }
+  .cal-day.disabled { color: #ccc; cursor: not-allowed; }
+  .cal-day.empty { cursor: default; }
+
+  .time-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; }
+  .slot {
+    padding: 0.45rem 0.2rem; text-align: center;
+    border: 1px solid rgba(74,191,223,0.25); border-radius: 5px;
+    font-size: 0.75rem; cursor: pointer; transition: all 0.15s;
+    color: var(--text-dark); font-weight: 500;
+  }
+  .slot:hover:not(.taken) { border-color: var(--aqua); color: var(--ocean); background: var(--pearl); }
+  .slot.selected { background: var(--aqua); border-color: var(--aqua); color: var(--navy); font-weight: 700; }
+  .slot.taken { background: #f0f0f0; color: #bbb; cursor: not-allowed; text-decoration: line-through; }
+  .no-date { color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 1rem; }
+
+  /* Form */
+  .form-group { margin-bottom: 1.1rem; }
+  label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--navy); margin-bottom: 0.35rem; letter-spacing: 0.3px; }
+  input[type="tel"], input[type="text"], textarea {
+    width: 100%; padding: 0.7rem 0.9rem;
+    border: 1.5px solid rgba(74,191,223,0.25); border-radius: 6px;
+    font-family: 'Inter', sans-serif; font-size: 0.88rem;
+    color: var(--text-dark); background: var(--foam);
+    transition: border-color 0.2s; outline: none;
+  }
+  input:focus, textarea:focus { border-color: var(--aqua); background: var(--white); }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .seat-type {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;
+  }
+  .seat-btn {
+    padding: 0.6rem; border: 1.5px solid rgba(74,191,223,0.25);
+    border-radius: 6px; background: var(--foam);
+    font-family: 'Inter', sans-serif; font-size: 0.82rem;
+    cursor: pointer; transition: all 0.15s; color: var(--text-dark); font-weight: 500;
+  }
+  .seat-btn.selected { background: var(--aqua); border-color: var(--aqua); color: var(--navy); font-weight: 700; }
+
+  .btn-confirm {
+    width: 100%; padding: 1rem;
+    background: linear-gradient(135deg, var(--aqua), var(--mid));
+    color: var(--white); border: none; border-radius: 8px;
+    font-family: 'Inter', sans-serif; font-weight: 700;
+    font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; transition: all 0.25s; margin-top: 0.5rem;
+    box-shadow: 0 4px 20px rgba(74,191,223,0.3);
+  }
+  .btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(74,191,223,0.45); }
+  .btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .booking-summary {
+    background: linear-gradient(135deg, rgba(74,191,223,0.08), rgba(30,77,140,0.05));
+    border: 1px solid rgba(74,191,223,0.2);
+    border-radius: 8px; padding: 1rem; margin-bottom: 1rem;
+    font-size: 0.82rem; color: var(--text-muted);
+  }
+  .booking-summary strong { color: var(--navy); }
+  .summary-row { display: flex; justify-content: space-between; padding: 0.2rem 0; }
+
+  /* ─── SUCCESS ─── */
+  .success-modal {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(10,22,40,0.8); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  .success-box {
+    background: var(--white); border-radius: 16px;
+    padding: 3rem 2.5rem; text-align: center;
+    max-width: 420px; width: 100%;
+    border: 2px solid var(--aqua);
+    animation: popIn 0.3s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .success-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+  .success-box h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; letter-spacing: 2px; color: var(--navy); margin-bottom: 0.6rem;
+  }
+  .success-box p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; }
+  .success-box .btn-primary { font-size: 0.85rem; padding: 0.8rem 1.8rem; }
+
+  /* ─── ADMIN PAGE ─── */
+  .admin-page {
+    padding-top: 64px; min-height: 100vh;
+    background: #0d1b2e;
+  }
+  .admin-header {
+    background: linear-gradient(135deg, #0d1b2e, #1a2e4a);
+    padding: 2rem;
+    border-bottom: 1px solid rgba(74,191,223,0.15);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .admin-header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; letter-spacing: 3px; color: var(--white);
+  }
+  .admin-header h1 span { color: var(--aqua); }
+  .admin-date-nav {
+    display: flex; align-items: center; gap: 0.8rem;
+  }
+  .admin-date-btn {
+    background: rgba(74,191,223,0.1); border: 1px solid rgba(74,191,223,0.2);
+    color: var(--aqua); padding: 0.4rem 0.8rem; border-radius: 4px;
+    cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+  .admin-date-btn:hover { background: var(--aqua); color: var(--navy); }
+  .admin-date-display {
+    font-weight: 600; color: var(--white); font-size: 0.9rem; min-width: 160px; text-align: center;
+  }
+
+  .admin-body {
+    max-width: 1000px; margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  .admin-stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem; margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(74,191,223,0.15);
+    border-radius: 8px; padding: 1.2rem; text-align: center;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem; color: var(--aqua); line-height: 1;
+  }
+  .stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.4); letter-spacing: 1px; margin-top: 0.3rem; }
+
+  .appt-list { display: flex; flex-direction: column; gap: 1rem; }
+  .appt-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(74,191,223,0.15);
+    border-radius: 10px; padding: 1.4rem;
+    display: grid; grid-template-columns: auto 1fr auto; gap: 1.2rem; align-items: center;
+  }
+  .appt-time-badge {
+    background: var(--aqua); color: var(--navy);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem; letter-spacing: 1px;
+    padding: 0.5rem 0.8rem; border-radius: 6px;
+    text-align: center; min-width: 70px;
+  }
+  .appt-info h4 { color: var(--white); font-size: 0.95rem; margin-bottom: 0.25rem; }
+  .appt-info p { color: rgba(255,255,255,0.45); font-size: 0.8rem; line-height: 1.5; }
+  .appt-pkg {
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 1px;
+    padding: 0.2rem 0.6rem; border-radius: 10px;
+    background: rgba(74,191,223,0.15); color: var(--aqua);
+    border: 1px solid rgba(74,191,223,0.3);
+    white-space: nowrap;
+  }
+  .appt-actions { display: flex; flex-direction: column; gap: 0.5rem; }
+  .action-btn {
+    padding: 0.35rem 0.8rem; border: none; border-radius: 4px;
+    font-family: 'Inter', sans-serif; font-size: 0.72rem;
+    font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+  .action-btn.call { background: rgba(74,191,223,0.15); color: var(--aqua); border: 1px solid rgba(74,191,223,0.3); }
+  .action-btn.call:hover { background: var(--aqua); color: var(--navy); }
+  .action-btn.maps { background: rgba(245,200,66,0.15); color: var(--gold); border: 1px solid rgba(245,200,66,0.3); }
+  .action-btn.maps:hover { background: var(--gold); color: var(--navy); }
+  .action-btn.delete { background: rgba(220,80,80,0.1); color: #e07070; border: 1px solid rgba(220,80,80,0.2); }
+  .action-btn.delete:hover { background: rgba(220,80,80,0.25); }
+
+  .no-appts {
+    text-align: center; padding: 4rem 2rem;
+    color: rgba(255,255,255,0.25);
+  }
+  .no-appts-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .no-appts p { font-size: 0.9rem; }
+
+  /* ─── LOGIN ─── */
+  .login-modal {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(10,22,40,0.92); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  .login-box {
+    background: #1a2e4a; border-radius: 16px;
+    padding: 2.5rem; width: 100%; max-width: 380px;
+    border: 1px solid rgba(74,191,223,0.2);
+  }
+  .login-box h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem; letter-spacing: 2px; color: var(--white); margin-bottom: 0.4rem;
+  }
+  .login-box p { color: rgba(255,255,255,0.4); font-size: 0.83rem; margin-bottom: 1.5rem; }
+  .login-box label { color: rgba(255,255,255,0.7); }
+  .login-box input {
+    background: rgba(255,255,255,0.06); border-color: rgba(74,191,223,0.2); color: var(--white);
+  }
+  .login-box input:focus { background: rgba(255,255,255,0.1); }
+  .login-err { color: #e07070; font-size: 0.8rem; margin-top: 0.5rem; display: none; }
+  .btn-login {
+    width: 100%; padding: 0.85rem;
+    background: var(--aqua); color: var(--navy);
+    border: none; border-radius: 6px;
+    font-family: 'Inter', sans-serif; font-weight: 700;
+    font-size: 0.9rem; cursor: pointer; margin-top: 1rem;
+    transition: all 0.2s;
+  }
+  .btn-login:hover { background: var(--light-blue); }
+  .btn-cancel-login {
+    width: 100%; padding: 0.6rem;
+    background: transparent; color: rgba(255,255,255,0.4);
+    border: none; font-family: 'Inter', sans-serif;
+    font-size: 0.83rem; cursor: pointer; margin-top: 0.5rem;
+  }
+  .btn-cancel-login:hover { color: rgba(255,255,255,0.7); }
+
+  .hidden { display: none !important; }
+  .back-btn {
+    background: none; border: none; color: rgba(255,255,255,0.5);
+    font-family: 'Inter', sans-serif; font-size: 0.82rem;
+    cursor: pointer; padding: 0; display: flex; align-items: center; gap: 0.4rem;
+    margin-bottom: 0.8rem; transition: color 0.2s;
+  }
+  .back-btn:hover { color: var(--aqua); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">Pure<span>Shine</span></div>
+  <div class="nav-links">
+    <a onclick="showPage('home')">Home</a>
+    <a onclick="document.getElementById('packages').scrollIntoView({behavior:'smooth'})">Packages</a>
+    <a onclick="openBooking('Quick Wash')">Book Now</a>
+    <button class="nav-admin" onclick="showAdminLogin()">Owner Login</button>
+  </div>
+</nav>
+
+<!-- ═══════════════ HOME PAGE ═══════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="bubbles" id="bubbles"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Mobile Car Detailing · Connecticut & Surrounding Areas</div>
+      <h1 class="hero-title">Pure<br><span>Shine</span><br>Detailing</h1>
+      <p class="hero-subtitle">Professional hand detailing brought straight to your door. We come to you — at home, at work, wherever your car is.</p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="document.getElementById('packages').scrollIntoView({behavior:'smooth'})">View Packages</button>
+        <button class="btn-outline" onclick="openBooking('Quick Wash')">Book Now</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PACKAGES -->
+  <section class="packages" id="packages">
+    <div class="section-header">
+      <div class="section-eyebrow">What We Offer</div>
+      <h2 class="section-title">Choose Your Package</h2>
+      <p class="section-sub">Hand-crafted detailing at every level. All services are mobile — we come to you.</p>
+    </div>
+    <div class="pricing-note">
+      <strong>📏 Pricing varies by vehicle size and seat material.</strong> Compact cars start at the lower end; SUVs and trucks at the higher end. Leather seats may affect interior pricing.
+    </div>
+    <div class="cards">
+      <!-- Quick Wash -->
+      <div class="card">
+        <div class="card-icon">🚿</div>
+        <div class="card-title">Quick Wash</div>
+        <div class="card-price">$25–$40 <span>per visit</span></div>
+        <ul class="card-features">
+          <li>Exterior hand wash & dry</li>
+          <li>Wheels & tires cleaned</li>
+        </ul>
+        <button class="btn-book" onclick="openBooking('Quick Wash')">Book This Package</button>
+      </div>
+      <!-- Full Interior -->
+      <div class="card featured">
+        <div class="card-badge">Most Popular</div>
+        <div class="card-icon">🪑</div>
+        <div class="card-title">Full Interior</div>
+        <div class="card-price">$50–$75 <span>per visit</span></div>
+        <ul class="card-features">
+          <li>Pet hair removal</li>
+          <li>Stain removal</li>
+          <li>Full vacuum</li>
+          <li>Seat shampooing</li>
+          <li>Center console cleaned</li>
+          <li>Door panels cleaned</li>
+        </ul>
+        <button class="btn-book" onclick="openBooking('Full Interior')">Book This Package</button>
+      </div>
+      <!-- The Works -->
+      <div class="card">
+        <div class="card-badge" style="background:var(--navy);color:var(--aqua);border:1px solid var(--aqua);">Complete Package</div>
+        <div class="card-icon">✨</div>
+        <div class="card-title">The Works</div>
+        <div class="card-price">$85–$100 <span>per visit</span></div>
+        <ul class="card-features">
+          <li>Everything in Quick Wash</li>
+          <li>Everything in Full Interior</li>
+          <li>Exterior hand wash & dry</li>
+          <li>Wheels & tires cleaned</li>
+          <li>Full interior detail</li>
+          <li>Seat shampoo + stain removal</li>
+          <li>Pet hair removal</li>
+          <li>Center console & doors</li>
+        </ul>
+        <button class="btn-book" onclick="openBooking('The Works')">Book This Package</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="why">
+    <div class="section-eyebrow" style="color:var(--aqua)">Why Choose Us</div>
+    <h2 class="section-title">We Come To You</h2>
+    <div class="why-grid">
+      <div class="why-item">
+        <div class="why-icon">📍</div>
+        <div class="why-label">Mobile Service</div>
+        <div class="why-desc">We detail at your home, office, or anywhere your car is parked.</div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon">🤲</div>
+        <div class="why-label">Hand Wash Only</div>
+        <div class="why-desc">No automatic car washes. Every car gets personal, careful attention.</div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon">📅</div>
+        <div class="why-label">Easy Booking</div>
+        <div class="why-desc">Pick a time that works for you and we'll be there, on time.</div>
+      </div>
+      <div class="why-item">
+        <div class="why-icon">💧</div>
+        <div class="why-label">Pro Products</div>
+        <div class="why-desc">Professional-grade soaps, shampoos, and conditioners only.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 <span>Pure Shine Detailing</span>. All rights reserved. · Mobile Detailing Service
+  </footer>
+</div>
+
+<!-- ═══════════════ BOOKING PAGE ═══════════════ -->
+<div id="page-booking" class="page">
+  <div class="booking-page">
+    <div class="booking-header">
+      <button class="back-btn" onclick="showPage('home')" style="margin:0 auto 1rem;display:flex;">← Back to Packages</button>
+      <h1>Book Your Appointment</h1>
+      <p>Select a date, time, and enter your details</p>
+      <div class="selected-package" id="selected-pkg-label">Quick Wash</div>
+    </div>
+    <div class="booking-body">
+      <!-- Left: Calendar + Time -->
+      <div>
+        <div class="booking-card" style="margin-bottom:1.5rem">
+          <h3>📅 Pick a Date</h3>
+          <div class="cal-nav">
+            <button class="cal-arrow" onclick="changeMonth(-1)">‹</button>
+            <div class="cal-month" id="cal-month-label"></div>
+            <button class="cal-arrow" onclick="changeMonth(1)">›</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+        <div class="booking-card">
+          <h3>⏰ Pick a Time</h3>
+          <div id="time-slots-container"><div class="no-date">Select a date above to see available times.</div></div>
+        </div>
+      </div>
+      <!-- Right: Form -->
+      <div>
+        <div class="booking-card">
+          <h3>Your Details</h3>
+          <div class="booking-summary" id="booking-summary" style="display:none">
+            <div class="summary-row"><span>Package</span><strong id="sum-pkg"></strong></div>
+            <div class="summary-row"><span>Date</span><strong id="sum-date"></strong></div>
+            <div class="summary-row"><span>Time</span><strong id="sum-time"></strong></div>
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" id="inp-phone" placeholder="(555) 000-0000" />
+          </div>
+          <div class="form-group">
+            <label>Service Address *</label>
+            <input type="text" id="inp-address" placeholder="123 Main St, City, MA" />
+          </div>
+          <div class="form-group">
+            <label>Vehicle (make, model, year)</label>
+            <input type="text" id="inp-vehicle" placeholder="e.g. 2019 Toyota Camry" />
+          </div>
+          <div class="form-group">
+            <label>Seat Type</label>
+            <div class="seat-type">
+              <button class="seat-btn selected" id="seat-cloth" onclick="selectSeat('cloth')">🪑 Cloth</button>
+              <button class="seat-btn" id="seat-leather" onclick="selectSeat('leather')">💼 Leather</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Special Requests (optional)</label>
+            <textarea id="inp-notes" placeholder="Anything we should know? Dog hair, stubborn stains, etc."></textarea>
+          </div>
+          <button class="btn-confirm" id="btn-confirm" onclick="confirmBooking()">📅 Book Appointment</button>
+          <p style="font-size:0.72rem;color:var(--text-muted);text-align:center;margin-top:0.8rem;">
+            * Required fields. We'll follow up if there are any questions.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ ADMIN PAGE ═══════════════ -->
+<div id="page-admin" class="page">
+  <div class="admin-page">
+    <div class="admin-header">
+      <div>
+        <button class="back-btn" onclick="showPage('home')" style="margin-bottom:0.5rem">← Back to Site</button>
+        <h1>Admin <span>Dashboard</span></h1>
+      </div>
+      <div class="admin-date-nav">
+        <button class="admin-date-btn" onclick="adminChangeDay(-1)">‹ Prev</button>
+        <div class="admin-date-display" id="admin-date-display"></div>
+        <button class="admin-date-btn" onclick="adminChangeDay(1)">Next ›</button>
+        <button class="admin-date-btn" onclick="adminGoToday()">Today</button>
+      </div>
+    </div>
+    <div class="admin-body">
+      <div class="admin-stats" id="admin-stats"></div>
+      <div class="appt-list" id="appt-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div class="login-modal hidden" id="login-modal">
+  <div class="login-box">
+    <h2>Owner Login</h2>
+    <p>Enter your password to access the admin dashboard.</p>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="admin-pw-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()" />
+      <div class="login-err" id="login-err">Incorrect password. Try again.</div>
+    </div>
+    <button class="btn-login" onclick="doLogin()">Sign In</button>
+    <button class="btn-cancel-login" onclick="document.getElementById('login-modal').classList.add('hidden')">Cancel</button>
+    <p style="color:rgba(255,255,255,0.2);font-size:0.7rem;margin-top:1rem;text-align:center">Demo password: <strong style="color:rgba(255,255,255,0.4)">shine2025</strong></p>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div class="success-modal hidden" id="success-modal">
+  <div class="success-box">
+    <div class="success-icon">✅</div>
+    <h2>You're Booked!</h2>
+    <p id="success-msg">Your appointment has been confirmed. We'll see you soon!</p>
+    <button class="btn-primary" onclick="closeSuccess()">Back to Home</button>
+  </div>
+</div>
+
+<script>
+  // ── STORAGE ──────────────────────────────────────────────────────────
+  function getAppointments() {
+    try { return JSON.parse(localStorage.getItem('ps_appointments') || '[]'); }
+    catch { return []; }
+  }
+  function saveAppointments(arr) {
+    localStorage.setItem('ps_appointments', JSON.stringify(arr));
+  }
+
+  // ── PAGES ─────────────────────────────────────────────────────────────
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    window.scrollTo(0,0);
+    if (name === 'admin') renderAdmin();
+  }
+
+  // ── BUBBLES ────────────────────────────────────────────────────────────
+  (function spawnBubbles() {
+    const container = document.getElementById('bubbles');
+    const sizes = [20, 35, 55, 80, 110, 140];
+    for (let i = 0; i < 18; i++) {
+      const b = document.createElement('div');
+      b.className = 'bubble';
+      const s = sizes[Math.floor(Math.random() * sizes.length)];
+      b.style.cssText = `
+        width:${s}px;height:${s}px;
+        left:${Math.random()*100}%;
+        animation-duration:${8 + Math.random()*10}s;
+        animation-delay:${-Math.random()*12}s;
+      `;
+      container.appendChild(b);
+    }
+  })();
+
+  // ── CALENDAR ──────────────────────────────────────────────────────────
+  let calDate = new Date();
+  calDate.setDate(1);
+  let selectedDate = null;
+  let selectedTime = null;
+  let selectedPackage = 'Quick Wash';
+  let selectedSeat = 'cloth';
+
+  function openBooking(pkg) {
+    selectedPackage = pkg;
+    selectedDate = null; selectedTime = null;
+    document.getElementById('selected-pkg-label').textContent = pkg;
+    renderCalendar();
+    updateSummary();
+    showPage('booking');
+  }
+
+  function changeMonth(dir) {
+    calDate.setMonth(calDate.getMonth() + dir);
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const y = calDate.getFullYear(), m = calDate.getMonth();
+    const label = calDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+    document.getElementById('cal-month-label').textContent = label;
+
+    const grid = document.getElementById('cal-grid');
+    grid.innerHTML = '';
+    ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
+      const el = document.createElement('div');
+      el.className = 'cal-day-label'; el.textContent = d;
+      grid.appendChild(el);
+    });
+    const firstDay = new Date(y, m, 1).getDay();
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+    for (let i = 0; i < firstDay; i++) {
+      const el = document.createElement('div'); el.className = 'cal-day empty';
+      grid.appendChild(el);
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const el = document.createElement('div');
+      el.className = 'cal-day';
+      el.textContent = d;
+      const thisDate = new Date(y, m, d);
+      if (thisDate < today) { el.classList.add('disabled'); }
+      else {
+        if (thisDate.getTime() === today.getTime()) el.classList.add('today');
+        const ds = dateStr(thisDate);
+        if (selectedDate === ds) el.classList.add('selected');
+        el.onclick = () => selectDate(ds, el);
+      }
+      grid.appendChild(el);
+    }
+  }
+
+  function dateStr(d) {
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  function selectDate(ds, el) {
+    selectedDate = ds; selectedTime = null;
+    document.querySelectorAll('.cal-day').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    renderTimeSlots();
+    updateSummary();
+  }
+
+  const ALL_SLOTS = ['8:00 AM','9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
+
+  function renderTimeSlots() {
+    const container = document.getElementById('time-slots-container');
+    if (!selectedDate) { container.innerHTML = '<div class="no-date">Select a date above.</div>'; return; }
+    const appts = getAppointments();
+    const takenTimes = appts.filter(a => a.date === selectedDate).map(a => a.time);
+    container.innerHTML = '<div class="time-slots"></div>';
+    const grid = container.querySelector('.time-slots');
+    ALL_SLOTS.forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'slot' + (takenTimes.includes(t) ? ' taken' : '');
+      btn.textContent = t;
+      if (!takenTimes.includes(t)) {
+        btn.onclick = () => {
+          selectedTime = t;
+          document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+          btn.classList.add('selected');
+          updateSummary();
+        };
+      }
+      if (selectedTime === t && !takenTimes.includes(t)) btn.classList.add('selected');
+      grid.appendChild(btn);
+    });
+  }
+
+  function selectSeat(type) {
+    selectedSeat = type;
+    document.getElementById('seat-cloth').classList.toggle('selected', type === 'cloth');
+    document.getElementById('seat-leather').classList.toggle('selected', type === 'leather');
+  }
+
+  function updateSummary() {
+    const sum = document.getElementById('booking-summary');
+    if (selectedDate && selectedTime) {
+      sum.style.display = 'block';
+      document.getElementById('sum-pkg').textContent = selectedPackage;
+      document.getElementById('sum-date').textContent = new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+      document.getElementById('sum-time').textContent = selectedTime;
+    } else {
+      sum.style.display = 'none';
+    }
+  }
+
+  function confirmBooking() {
+    if (!selectedDate || !selectedTime) { alert('Please select a date and time.'); return; }
+    const phone = document.getElementById('inp-phone').value.trim();
+    const address = document.getElementById('inp-address').value.trim();
+    if (!phone) { alert('Please enter your phone number.'); return; }
+    if (!address) { alert('Please enter your service address.'); return; }
+    const vehicle = document.getElementById('inp-vehicle').value.trim();
+    const notes = document.getElementById('inp-notes').value.trim();
+
+    const appt = {
+      id: Date.now(),
+      package: selectedPackage,
+      date: selectedDate,
+      time: selectedTime,
+      phone, address, vehicle,
+      seats: selectedSeat,
+      notes,
+      booked: new Date().toISOString()
+    };
+    const appts = getAppointments();
+    // Double-booking check
+    if (appts.find(a => a.date === selectedDate && a.time === selectedTime)) {
+      alert('That time slot was just taken! Please pick another.'); renderTimeSlots(); return;
+    }
+    appts.push(appt);
+    saveAppointments(appts);
+
+    const dateLabel = new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
+    document.getElementById('success-msg').textContent =
+      `Your ${selectedPackage} is booked for ${dateLabel} at ${selectedTime}. We'll see you at ${address}!`;
+    document.getElementById('success-modal').classList.remove('hidden');
+    // Reset
+    selectedDate = null; selectedTime = null;
+    document.getElementById('inp-phone').value = '';
+    document.getElementById('inp-address').value = '';
+    document.getElementById('inp-vehicle').value = '';
+    document.getElementById('inp-notes').value = '';
+  }
+
+  function closeSuccess() {
+    document.getElementById('success-modal').classList.add('hidden');
+    showPage('home');
+  }
+
+  // ── ADMIN ────────────────────────────────────────────────────────────
+  let adminViewDate = new Date();
+
+  function showAdminLogin() {
+    if (sessionStorage.getItem('ps_admin_auth') === 'true') { showPage('admin'); return; }
+    document.getElementById('admin-pw-input').value = '';
+    document.getElementById('login-err').style.display = 'none';
+    document.getElementById('login-modal').classList.remove('hidden');
+    setTimeout(() => document.getElementById('admin-pw-input').focus(), 100);
+  }
+
+  function doLogin() {
+    const pw = document.getElementById('admin-pw-input').value;
+    if (pw === 'shine2025') {
+      sessionStorage.setItem('ps_admin_auth', 'true');
+      document.getElementById('login-modal').classList.add('hidden');
+      showPage('admin');
+    } else {
+      document.getElementById('login-err').style.display = 'block';
+    }
+  }
+
+  function adminChangeDay(d) {
+    adminViewDate = new Date(adminViewDate);
+    adminViewDate.setDate(adminViewDate.getDate() + d);
+    renderAdmin();
+  }
+  function adminGoToday() { adminViewDate = new Date(); renderAdmin(); }
+
+  function renderAdmin() {
+    const ds = dateStr(adminViewDate);
+    document.getElementById('admin-date-display').textContent =
+      adminViewDate.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+
+    const appts = getAppointments().filter(a => a.date === ds);
+    appts.sort((a,b) => ALL_SLOTS.indexOf(a.time) - ALL_SLOTS.indexOf(b.time));
+
+    // Stats
+    const allAppts = getAppointments();
+    const todayDs = dateStr(new Date());
+    const todayCount = allAppts.filter(a => a.date === todayDs).length;
+    const totalCount = allAppts.length;
+    const upcomingCount = allAppts.filter(a => a.date >= dateStr(new Date())).length;
+
+    document.getElementById('admin-stats').innerHTML = `
+      <div class="stat-card"><div class="stat-num">${appts.length}</div><div class="stat-label">Today's Jobs</div></div>
+      <div class="stat-card"><div class="stat-num">${upcomingCount}</div><div class="stat-label">Upcoming</div></div>
+      <div class="stat-card"><div class="stat-num">${totalCount}</div><div class="stat-label">Total Booked</div></div>
+    `;
+
+    const list = document.getElementById('appt-list');
+    if (appts.length === 0) {
+      list.innerHTML = `
+        <div class="no-appts">
+          <div class="no-appts-icon">📅</div>
+          <p>No appointments scheduled for this day.</p>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = appts.map(a => `
+      <div class="appt-card" id="appt-${a.id}">
+        <div class="appt-time-badge">${a.time.replace(' ','<br>')}</div>
+        <div class="appt-info">
+          <h4>${a.vehicle || 'Vehicle not specified'} &nbsp;<span class="appt-pkg">${a.package}</span></h4>
+          <p>📍 ${a.address}</p>
+          <p>📞 ${a.phone} &nbsp;·&nbsp; 🪑 ${a.seats.charAt(0).toUpperCase() + a.seats.slice(1)} seats</p>
+          ${a.notes ? `<p style="margin-top:0.3rem;color:rgba(255,255,255,0.35);font-style:italic">${a.notes}</p>` : ''}
+        </div>
+        <div class="appt-actions">
+          <a href="tel:${a.phone.replace(/\D/g,'')}"><button class="action-btn call">📞 Call</button></a>
+          <a href="https://maps.google.com/?q=${encodeURIComponent(a.address)}" target="_blank"><button class="action-btn maps">🗺 Directions</button></a>
+          <button class="action-btn delete" onclick="deleteAppt(${a.id})">✕ Cancel</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function deleteAppt(id) {
+    if (!confirm('Cancel this appointment?')) return;
+    saveAppointments(getAppointments().filter(a => a.id !== id));
+    renderAdmin();
+  }
+
+  // ── INIT ─────────────────────────────────────────────────────────────
+  renderCalendar();
+</script>
+</body>
+</html>
