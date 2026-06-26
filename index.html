@@ -611,15 +611,13 @@
   // ── HELPERS ───────────────────────────────────────────────────────────
   function isCompleteAddress(addr) {
     if (!addr) return false;
-    // Must have a leading street number
-    if (!/^\d+/.test(addr.trim())) return false;
-    // Must have a 5-digit zip code
-    if (!/\b\d{5}\b/.test(addr)) return false;
-    // Must have a 2-letter state abbreviation (preceded by a comma or space)
-    if (!/\b[A-Za-z]{2}\b/.test(addr)) return false;
-    // Must have at least 3 comma-separated or space-separated segments (street, city, state+zip)
-    const parts = addr.split(',').map(s => s.trim()).filter(Boolean);
-    if (parts.length < 3) return false;
+    const s = addr.trim();
+    // Must start with a street number
+    if (!/^\d+\s+\S/.test(s)) return false;
+    // Must contain a state abbreviation followed (with optional comma/space) by a 5-digit zip
+    if (!/\b[A-Za-z]{2}[,\s]+\d{5}\b/.test(s)) return false;
+    // Must have at least 4 whitespace-separated words (number + street + city + state+zip minimum)
+    if (s.split(/\s+/).length < 4) return false;
     return true;
   }
   function clearAddressError() {
