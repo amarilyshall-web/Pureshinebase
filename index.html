@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pure Shine Detailing</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -152,10 +153,8 @@
   .admin-header { background: linear-gradient(135deg, #0d1b2e, #1a2e4a); padding: 2rem; border-bottom: 1px solid rgba(74,191,223,0.15); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
   .admin-header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; color: var(--white); }
   .admin-header h1 span { color: var(--aqua); }
-  .admin-date-nav { display: flex; align-items: center; gap: 0.8rem; }
   .admin-date-btn { background: rgba(74,191,223,0.1); border: 1px solid rgba(74,191,223,0.2); color: var(--aqua); padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.8rem; transition: all 0.2s; }
   .admin-date-btn:hover { background: var(--aqua); color: var(--navy); }
-  .admin-date-display { font-weight: 600; color: var(--white); font-size: 0.9rem; min-width: 160px; text-align: center; }
   .admin-body { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; }
   .admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 1rem; margin-bottom: 2rem; }
   .stat-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(74,191,223,0.15); border-radius: 8px; padding: 1.2rem; text-align: center; }
@@ -253,6 +252,36 @@
   .hidden { display: none !important; }
   .back-btn { background: none; border: none; color: rgba(255,255,255,0.5); font-family: 'Inter', sans-serif; font-size: 0.82rem; cursor: pointer; padding: 0; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.8rem; transition: color 0.2s; }
   .back-btn:hover { color: var(--aqua); }
+  /* Recurring schedule panel */
+  .recurring-panel { background: rgba(255,255,255,0.04); border: 1px solid rgba(74,191,223,0.15); border-radius: 10px; padding: 1.4rem; margin-bottom: 1.5rem; }
+  .recurring-panel > h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 1px; color: var(--aqua); margin-bottom: 0.4rem; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(74,191,223,0.15); }
+  .recurring-panel > p { font-size: 0.78rem; color: rgba(255,255,255,0.3); margin-bottom: 1rem; line-height: 1.5; }
+  .recurring-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 0.4rem; margin-bottom: 0.5rem; }
+  .recurring-day-btn { padding: 0.55rem 0.2rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 7px; background: rgba(255,255,255,0.03); cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; font-family: 'Inter', sans-serif; }
+  .recurring-day-btn:hover { border-color: rgba(74,191,223,0.3); background: rgba(74,191,223,0.07); }
+  .recurring-day-btn.selected { border-color: var(--aqua) !important; background: rgba(74,191,223,0.12) !important; }
+  .recurring-day-btn.is-off { border-color: rgba(220,80,80,0.3); background: rgba(220,80,80,0.07); }
+  .recurring-day-btn.has-hours { border-color: rgba(74,191,223,0.35); background: rgba(74,191,223,0.07); }
+  .rec-day-name { font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.6); letter-spacing: 0.5px; }
+  .recurring-day-btn.is-off .rec-day-name { color: #e07070; }
+  .recurring-day-btn.has-hours .rec-day-name { color: var(--aqua); }
+  .recurring-day-btn.selected .rec-day-name { color: var(--white); }
+  .rec-day-status { font-size: 0.6rem; color: rgba(255,255,255,0.28); text-align: center; line-height: 1.2; }
+  .recurring-day-btn.is-off .rec-day-status { color: rgba(220,80,80,0.6); }
+  .recurring-day-btn.has-hours .rec-day-status { color: rgba(74,191,223,0.65); }
+  .rec-editor-box { background: rgba(255,255,255,0.04); border: 1px solid rgba(74,191,223,0.2); border-radius: 8px; padding: 1.1rem; margin-top: 0.6rem; }
+  .rec-editor-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 1px; color: var(--white); margin-bottom: 0.8rem; }
+  .rec-radio-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.9rem; }
+  .rec-radio { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-size: 0.84rem; color: rgba(255,255,255,0.65); }
+  .rec-radio input { accent-color: var(--aqua); width: 14px; height: 14px; cursor: pointer; flex-shrink: 0; }
+  .rec-hours-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .rec-select { background: rgba(255,255,255,0.06); border: 1px solid rgba(74,191,223,0.25); border-radius: 5px; color: var(--white); padding: 0.4rem 0.5rem; font-family: 'Inter', sans-serif; font-size: 0.82rem; outline: none; cursor: pointer; color-scheme: dark; }
+  .rec-select:focus { border-color: var(--aqua); background: rgba(255,255,255,0.1); }
+  .rec-editor-actions { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+  .rec-remove-btn { background: rgba(220,80,80,0.1); border: 1px solid rgba(220,80,80,0.25); color: #e07070; border-radius: 5px; padding: 0.45rem 0.9rem; font-family: 'Inter', sans-serif; font-size: 0.8rem; cursor: pointer; transition: all 0.15s; font-weight: 500; }
+  .rec-remove-btn:hover { background: rgba(220,80,80,0.22); }
+  .rec-cancel-btn { background: none; border: none; color: rgba(255,255,255,0.3); font-family: 'Inter', sans-serif; font-size: 0.8rem; cursor: pointer; padding: 0.45rem 0.4rem; transition: color 0.15s; }
+  .rec-cancel-btn:hover { color: rgba(255,255,255,0.6); }
   /* Admin overview calendar */
   .admin-overview-cal { background: rgba(255,255,255,0.04); border: 1px solid rgba(74,191,223,0.15); border-radius: 10px; padding: 1.4rem; margin-bottom: 1.5rem; }
   .admin-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
@@ -416,7 +445,12 @@
             <div class="summary-row"><span>Time</span><strong id="sum-time"></strong></div>
           </div>
           <div class="form-group"><label>Phone Number *</label><input type="tel" id="inp-phone" placeholder="(555) 000-0000" /></div>
-          <div class="form-group"><label>Service Address *</label><input type="text" id="inp-address" placeholder="123 Main St, City, MA" /></div>
+          <div class="form-group">
+            <label>Service Address *</label>
+            <input type="text" id="inp-address" placeholder="123 Main St, City, CT 06001" oninput="clearAddressError()" />
+            <div id="address-error" style="display:none;color:#e07070;font-size:0.75rem;margin-top:0.35rem;">⚠️ Please enter a complete address: street number, street name, city, state, and zip code.</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.3rem;">Example: 123 Main St, Hartford, CT 06103</div>
+          </div>
           <div class="form-group"><label>Vehicle (make, model, year)</label><input type="text" id="inp-vehicle" placeholder="e.g. 2019 Toyota Camry" /></div>
           <div class="form-group">
             <label>Seat Type</label>
@@ -468,10 +502,15 @@
         </div>
       </div>
       <div id="admin-availability-view" class="hidden">
-        <!-- Firestore rules warning — shown if a write fails -->
         <div class="rules-banner" id="rules-banner">
           ⚠️ <strong>Could not save changes.</strong> Your Firestore security rules are likely blocking writes.
-          Go to <a href="https://console.firebase.google.com" target="_blank">Firebase Console</a> → Firestore Database → Rules and make sure authenticated users can write. Example rules are shown below the calendar.
+          Go to <a href="https://console.firebase.google.com" target="_blank">Firebase Console</a> → Firestore Database → Rules and make sure authenticated users can write. Also add a rule for the <code>recurring_rules</code> collection.
+        </div>
+        <div class="recurring-panel">
+          <h3>📆 Recurring Schedule</h3>
+          <p>Set rules that apply every week. Click a day to edit it. These work alongside your per-date blocks below.</p>
+          <div class="recurring-days" id="recurring-days"></div>
+          <div id="recurring-editor"></div>
         </div>
         <div class="avail-layout">
           <div class="avail-panel">
@@ -494,28 +533,6 @@
               <p class="avail-hint">← Select a date on the calendar to manage its availability.</p>
             </div>
           </div>
-        </div>
-        <!-- Firestore rules snippet -->
-        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:1rem;margin-bottom:1.5rem;">
-          <p style="font-size:0.72rem;color:rgba(255,255,255,0.3);margin-bottom:0.6rem;letter-spacing:0.5px;text-transform:uppercase;font-weight:600;">Required Firestore Security Rules</p>
-          <pre style="font-size:0.72rem;color:rgba(74,191,223,0.7);line-height:1.6;overflow-x:auto;white-space:pre-wrap;">rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /appointments/{doc} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-    match /blocked_availability/{doc} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-    match /custom_slots/{doc} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-  }
-}</pre>
-          <p style="font-size:0.7rem;color:rgba(255,255,255,0.25);margin-top:0.5rem;">Paste this in Firebase Console → Firestore Database → Rules → Publish</p>
         </div>
         <div class="blocked-list-panel">
           <h3>🚫 All Blocked &amp; Custom Hours</h3>
@@ -562,16 +579,55 @@ service cloud.firestore {
   import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+  // ── EMAILJS CONFIG ────────────────────────────────────────────────────
+  const EMAILJS_PUBLIC_KEY  = 'a20lukxqkikUOgvdP';
+  const EMAILJS_SERVICE_ID  = 'service_6welcn6';
+  const EMAILJS_TEMPLATE_ID = 'template_fluaqu9';
+  if (typeof emailjs !== 'undefined') emailjs.init(EMAILJS_PUBLIC_KEY);
+
   const _app  = initializeApp(FIREBASE_CONFIG);
   const _db   = getFirestore(_app);
   const _auth = getAuth(_app);
-  const COLL        = "appointments";
-  const AVAIL_COLL  = "blocked_availability";
-  const CUSTOM_COLL = "custom_slots";
+  const COLL           = "appointments";
+  const AVAIL_COLL     = "blocked_availability";
+  const CUSTOM_COLL    = "custom_slots";
+  const RECURRING_COLL = "recurring_rules";
+
+  const DAYS_FULL  = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const HOUR_OPTIONS = (() => {
+    const opts = [];
+    for (let h = 6; h <= 22; h++) {
+      for (const m of [0, 30]) {
+        if (h === 22 && m === 30) break;
+        const period = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        opts.push(`${h12}:${String(m).padStart(2,'0')} ${period}`);
+      }
+    }
+    return opts;
+  })();
 
   // ── HELPERS ───────────────────────────────────────────────────────────
+  function isCompleteAddress(addr) {
+    if (!addr) return false;
+    // Must have a leading street number
+    if (!/^\d+/.test(addr.trim())) return false;
+    // Must have a 5-digit zip code
+    if (!/\b\d{5}\b/.test(addr)) return false;
+    // Must have a 2-letter state abbreviation (preceded by a comma or space)
+    if (!/\b[A-Za-z]{2}\b/.test(addr)) return false;
+    // Must have at least 3 comma-separated or space-separated segments (street, city, state+zip)
+    const parts = addr.split(',').map(s => s.trim()).filter(Boolean);
+    if (parts.length < 3) return false;
+    return true;
+  }
+  function clearAddressError() {
+    const el = document.getElementById('address-error');
+    if (el) el.style.display = 'none';
+  }
+
   function parseTime(t) {
-    // "8:00 AM" → minutes since midnight for sorting
     const [timePart, period] = t.trim().split(' ');
     let [h, m] = timePart.split(':').map(Number);
     if (period === 'PM' && h !== 12) h += 12;
@@ -579,7 +635,6 @@ service cloud.firestore {
     return h * 60 + (m || 0);
   }
   function formatTime(value) {
-    // "HH:MM" (24h) → "8:00 AM"
     const [h24, m] = value.split(':').map(Number);
     const period = h24 >= 12 ? 'PM' : 'AM';
     const h = h24 % 12 || 12;
@@ -649,6 +704,127 @@ service cloud.firestore {
     if (b) b.style.display = 'block';
   }
 
+  // ── RECURRING RULES ───────────────────────────────────────────────────
+  let _recurringCache = null, _recurringCacheTime = 0;
+  async function getRecurringRules() {
+    const now = Date.now();
+    if (_recurringCache && now - _recurringCacheTime < 20000) return _recurringCache;
+    try {
+      const snap = await getDocs(collection(_db, RECURRING_COLL));
+      _recurringCache = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
+      _recurringCacheTime = now; return _recurringCache;
+    } catch(e) { console.error("Recurring read:", e); return []; }
+  }
+  function invalidateRecurringCache() { _recurringCache = null; }
+  async function saveRecurringRuleDoc(data, existingDocId) {
+    try {
+      if (existingDocId) await deleteDoc(doc(_db, RECURRING_COLL, existingDocId));
+      await addDoc(collection(_db, RECURRING_COLL), data);
+      invalidateRecurringCache(); return true;
+    } catch(e) { console.error("Recurring write:", e); showRulesBanner(); return false; }
+  }
+  async function deleteRecurringRuleDoc(docId) {
+    try { await deleteDoc(doc(_db, RECURRING_COLL, docId)); invalidateRecurringCache(); }
+    catch(e) { console.error("Recurring delete:", e); showRulesBanner(); }
+  }
+
+  let _recurringSelectedDay = null;
+
+  function shortTime(t) {
+    if (!t) return '';
+    const [timePart, period] = t.split(' ');
+    const [h, m] = timePart.split(':');
+    return m === '00' ? `${h} ${period}` : t;
+  }
+
+  async function renderRecurringPanel() {
+    const rules = await getRecurringRules();
+    const ruleByDay = {};
+    rules.forEach(r => { ruleByDay[r.day] = r; });
+    const container = document.getElementById('recurring-days');
+    if (!container) return;
+    container.innerHTML = DAYS_SHORT.map((d, i) => {
+      const rule = ruleByDay[i];
+      let statusClass = '', statusLabel = 'Open';
+      if (rule) {
+        if (rule.type === 'full_day') { statusClass = 'is-off'; statusLabel = 'Day Off'; }
+        else if (rule.type === 'hours') { statusClass = 'has-hours'; statusLabel = `${shortTime(rule.start)}–${shortTime(rule.end)}`; }
+      }
+      const isSel = _recurringSelectedDay === i;
+      return `<button class="recurring-day-btn ${statusClass}${isSel?' selected':''}" onclick="selectRecurringDay(${i})">
+        <span class="rec-day-name">${d}</span>
+        <span class="rec-day-status">${statusLabel}</span>
+      </button>`;
+    }).join('');
+    const editorEl = document.getElementById('recurring-editor');
+    if (!editorEl) return;
+    if (_recurringSelectedDay === null) { editorEl.innerHTML = ''; return; }
+    const day = _recurringSelectedDay;
+    const rule = ruleByDay[day];
+    const currentType = rule ? rule.type : 'open';
+    const currentStart = rule?.start || '9:00 AM';
+    const currentEnd   = rule?.end   || '5:00 PM';
+    const optHtml = (sel) => HOUR_OPTIONS.map(t => `<option value="${t}"${t===sel?' selected':''}>${t}</option>`).join('');
+    editorEl.innerHTML = `<div class="rec-editor-box">
+      <div class="rec-editor-title">${DAYS_FULL[day]}s</div>
+      <div class="rec-radio-group">
+        <label class="rec-radio"><input type="radio" name="rec-type" value="open" ${currentType==='open'?'checked':''} onchange="recTypeChange(this.value)"><span>Open — show all standard hours</span></label>
+        <label class="rec-radio"><input type="radio" name="rec-type" value="full_day" ${currentType==='full_day'?'checked':''} onchange="recTypeChange(this.value)"><span>Day Off — block every ${DAYS_FULL[day]}</span></label>
+        <label class="rec-radio"><input type="radio" name="rec-type" value="hours" ${currentType==='hours'?'checked':''} onchange="recTypeChange(this.value)"><span>Custom Hours — set a specific time range</span></label>
+      </div>
+      <div class="rec-hours-row" id="rec-hours-row" style="display:${currentType==='hours'?'flex':'none'}">
+        <span style="color:rgba(255,255,255,0.45);font-size:0.82rem;">From</span>
+        <select id="rec-start" class="rec-select">${optHtml(currentStart)}</select>
+        <span style="color:rgba(255,255,255,0.45);font-size:0.82rem;">to</span>
+        <select id="rec-end" class="rec-select">${optHtml(currentEnd)}</select>
+      </div>
+      <div class="rec-editor-actions">
+        <button class="btn-add-time" onclick="applyRecurringRule(${day},'${rule?._docId||''}')">Save</button>
+        ${rule ? `<button class="rec-remove-btn" onclick="clearRecurringRule(${day},'${rule._docId}')">Remove Rule</button>` : ''}
+        <button class="rec-cancel-btn" onclick="cancelRecurringEdit()">Cancel</button>
+      </div>
+    </div>`;
+  }
+
+  function recTypeChange(val) {
+    const row = document.getElementById('rec-hours-row');
+    if (row) row.style.display = val === 'hours' ? 'flex' : 'none';
+  }
+  function selectRecurringDay(day) {
+    _recurringSelectedDay = _recurringSelectedDay === day ? null : day;
+    renderRecurringPanel();
+  }
+  function cancelRecurringEdit() { _recurringSelectedDay = null; renderRecurringPanel(); }
+
+  async function applyRecurringRule(day, existingDocId) {
+    const typeEl = document.querySelector('input[name="rec-type"]:checked');
+    if (!typeEl) return;
+    const type = typeEl.value;
+    if (type === 'open') {
+      if (existingDocId) await deleteRecurringRuleDoc(existingDocId);
+      else invalidateRecurringCache();
+      _recurringSelectedDay = null;
+      await renderRecurringPanel(); renderCalendar(); return;
+    }
+    const data = { day, type };
+    if (type === 'hours') {
+      const start = document.getElementById('rec-start')?.value;
+      const end   = document.getElementById('rec-end')?.value;
+      if (!start || !end) { alert('Please select both a start and end time.'); return; }
+      if (parseTime(start) >= parseTime(end)) { alert('Start time must be before end time.'); return; }
+      data.start = start; data.end = end;
+    }
+    const ok = await saveRecurringRuleDoc(data, existingDocId || null);
+    if (ok) { _recurringSelectedDay = null; await renderRecurringPanel(); renderCalendar(); }
+  }
+
+  async function clearRecurringRule(day, docId) {
+    if (!confirm(`Remove the recurring rule for ${DAYS_FULL[day]}s?`)) return;
+    await deleteRecurringRuleDoc(docId);
+    _recurringSelectedDay = null;
+    await renderRecurringPanel(); renderCalendar();
+  }
+
   // ── PAGES ─────────────────────────────────────────────────────────────
   function showPage(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -690,13 +866,14 @@ service cloud.firestore {
     ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => { const el = document.createElement('div'); el.className = 'cal-day-label'; el.textContent = d; grid.appendChild(el); });
     const firstDay = new Date(y,m,1).getDay(), daysInMonth = new Date(y,m+1,0).getDate();
     for (let i = 0; i < firstDay; i++) { const el = document.createElement('div'); el.className = 'cal-day empty'; grid.appendChild(el); }
-    const blocked = await getBlockedSlots();
-    const fullDayBlocked = new Set(blocked.filter(b => b.type === 'full_day').map(b => b.date));
+    const [blocked, recurring] = await Promise.all([getBlockedSlots(), getRecurringRules()]);
+    const fullDayBlocked   = new Set(blocked.filter(b => b.type === 'full_day').map(b => b.date));
+    const recurringOffDays = new Set(recurring.filter(r => r.type === 'full_day').map(r => r.day));
     for (let d = 1; d <= daysInMonth; d++) {
       const el = document.createElement('div'); el.className = 'cal-day'; el.textContent = d;
       const thisDate = new Date(y,m,d); const ds = dateStr(thisDate);
       if (thisDate < today) { el.classList.add('disabled'); }
-      else if (fullDayBlocked.has(ds)) { el.classList.add('not-available'); el.title = 'Not available'; }
+      else if (fullDayBlocked.has(ds) || recurringOffDays.has(thisDate.getDay())) { el.classList.add('not-available'); el.title = 'Not available'; }
       else {
         if (thisDate.getTime() === today.getTime()) el.classList.add('today');
         if (selectedDate === ds) el.classList.add('selected');
@@ -717,14 +894,31 @@ service cloud.firestore {
     if (!selectedDate) { container.innerHTML = '<div class="no-date">Select a date above.</div>'; return; }
     container.innerHTML = '<div class="no-date">Loading times…</div>';
 
-    const [appts, blocked, custom] = await Promise.all([getAppointments(), getBlockedSlots(), getCustomSlots()]);
+    const [appts, blocked, custom, recurring] = await Promise.all([getAppointments(), getBlockedSlots(), getCustomSlots(), getRecurringRules()]);
     const bookedTimes  = new Set(appts.filter(a => a.date === selectedDate).map(a => a.time));
     const blockedTimes = new Set(blocked.filter(b => b.type === 'time_slot' && b.date === selectedDate).map(b => b.time));
     const takenTimes   = new Set([...bookedTimes, ...blockedTimes]);
     const customTimes  = custom.filter(c => c.date === selectedDate).map(c => c.time);
 
-    // Merge standard + custom slots, sort by time
-    const allSlots = [...new Set([...ALL_SLOTS, ...customTimes])].sort((a, b) => parseTime(a) - parseTime(b));
+    const dayOfWeek = new Date(selectedDate + 'T12:00:00').getDay();
+    const recurringRule = recurring.find(r => r.day === dayOfWeek);
+
+    let baseSlots;
+    if (recurringRule && recurringRule.type === 'hours') {
+      const startMins = parseTime(recurringRule.start);
+      const endMins   = parseTime(recurringRule.end);
+      baseSlots = [];
+      for (let mins = startMins; mins <= endMins; mins += 60) {
+        const h24 = Math.floor(mins / 60);
+        const m   = mins % 60;
+        const period = h24 >= 12 ? 'PM' : 'AM';
+        const h12 = h24 % 12 || 12;
+        baseSlots.push(`${h12}:${String(m).padStart(2,'0')} ${period}`);
+      }
+    } else {
+      baseSlots = ALL_SLOTS;
+    }
+    let allSlots = [...new Set([...baseSlots, ...customTimes])].sort((a, b) => parseTime(a) - parseTime(b));
 
     container.innerHTML = '<div class="time-slots"></div>';
     const slotGrid = container.querySelector('.time-slots');
@@ -764,7 +958,11 @@ service cloud.firestore {
     const phone = document.getElementById('inp-phone').value.trim();
     const address = document.getElementById('inp-address').value.trim();
     if (!phone) { alert('Please enter your phone number.'); return; }
-    if (!address) { alert('Please enter your service address.'); return; }
+    if (!isCompleteAddress(address)) {
+      const errEl = document.getElementById('address-error');
+      if (errEl) { errEl.style.display = 'block'; document.getElementById('inp-address').focus(); }
+      return;
+    }
     const vehicle = document.getElementById('inp-vehicle').value.trim();
     const notes = document.getElementById('inp-notes').value.trim();
     const btn = document.getElementById('btn-confirm');
@@ -783,6 +981,18 @@ service cloud.firestore {
     const dateLabel = new Date(selectedDate+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
     document.getElementById('success-msg').textContent = `Your ${selectedPackage} is booked for ${dateLabel} at ${selectedTime}. We'll see you at ${address}!`;
     document.getElementById('success-modal').classList.remove('hidden');
+    if (typeof emailjs !== 'undefined') {
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        package:  selectedPackage,
+        date:     dateLabel,
+        time:     selectedTime,
+        phone:    phone,
+        address:  address,
+        vehicle:  vehicle || 'Not specified',
+        seats:    selectedSeat,
+        notes:    notes || 'None'
+      }).catch(e => console.warn('Email notification skipped:', e));
+    }
     selectedDate = null; selectedTime = null;
     ['inp-phone','inp-address','inp-vehicle','inp-notes'].forEach(id => document.getElementById(id).value = '');
   }
@@ -791,7 +1001,7 @@ service cloud.firestore {
   // ── ADMIN ─────────────────────────────────────────────────────────────
   let adminCalDate = new Date(); adminCalDate.setDate(1);
   let adminSelectedDay = null;
-  let _allAppts = null; // cached for calendar render
+  let _allAppts = null;
   onAuthStateChanged(_auth, user => { if (user && document.getElementById('page-admin').classList.contains('active')) renderAdmin(); });
   function showAdminLogin() {
     if (_auth.currentUser) { showPage('admin'); return; }
@@ -830,7 +1040,6 @@ service cloud.firestore {
     _allAppts = await getAppointments();
     const todayDs = dateStr(new Date());
     const upcomingCount = _allAppts.filter(a => a.date >= todayDs).length;
-    // Stats
     const thisMonthAppts = _allAppts.filter(a => {
       const [y,m] = a.date.split('-').map(Number);
       return y === adminCalDate.getFullYear() && m === adminCalDate.getMonth()+1;
@@ -840,10 +1049,8 @@ service cloud.firestore {
       <div class="stat-card"><div class="stat-num">${thisMonthAppts}</div><div class="stat-label">This Month</div></div>
       <div class="stat-card"><div class="stat-num">${_allAppts.length}</div><div class="stat-label">All Time</div></div>
     `;
-    // Count appts per date
     const countByDate = {};
     _allAppts.forEach(a => { countByDate[a.date] = (countByDate[a.date] || 0) + 1; });
-    // Render calendar
     const y = adminCalDate.getFullYear(), m = adminCalDate.getMonth();
     document.getElementById('admin-cal-month-label').textContent = adminCalDate.toLocaleString('default',{month:'long',year:'numeric'});
     const grid = document.getElementById('admin-cal-grid'); grid.innerHTML = '';
@@ -872,7 +1079,6 @@ service cloud.firestore {
       el.onclick = () => { adminSelectedDay = ds; renderAdminCalendar(); renderAdminDayDetail(ds); };
       grid.appendChild(el);
     }
-    // Auto-show detail if a day is already selected
     if (adminSelectedDay) renderAdminDayDetail(adminSelectedDay);
   }
 
@@ -902,7 +1108,7 @@ service cloud.firestore {
   async function deleteAppt(docId, ds) {
     if (!confirm('Cancel this appointment?')) return;
     await removeAppointment(docId);
-    _allAppts = null; // bust cache
+    _allAppts = null;
     await renderAdminCalendar();
     if (ds) renderAdminDayDetail(ds);
   }
@@ -914,7 +1120,6 @@ service cloud.firestore {
     document.getElementById('admin-appointments-view').classList.toggle('hidden', tab !== 'appointments');
     document.getElementById('admin-availability-view').classList.toggle('hidden', tab !== 'availability');
     if (tab === 'appointments') {
-      // Auto-select today on first load
       if (!adminSelectedDay) { adminSelectedDay = dateStr(new Date()); }
       renderAdminCalendar();
     } else { renderAvailability(); }
@@ -925,7 +1130,7 @@ service cloud.firestore {
   let availSelectedDate = null;
   function availChangeMonth(dir) { availCalDate.setMonth(availCalDate.getMonth() + dir); renderAvailCal(); }
 
-  async function renderAvailability() { await renderAvailCal(); await renderBlockedList(); if (availSelectedDate) await renderAvailSlots(); }
+  async function renderAvailability() { await renderRecurringPanel(); await renderAvailCal(); await renderBlockedList(); if (availSelectedDate) await renderAvailSlots(); }
 
   async function renderAvailCal() {
     const [blocked, custom] = await Promise.all([getBlockedSlots(), getCustomSlots()]);
@@ -964,27 +1169,20 @@ service cloud.firestore {
   async function renderAvailSlots() {
     const container = document.getElementById('avail-slots-section');
     if (!availSelectedDate) { container.innerHTML = '<p class="avail-hint">← Select a date on the calendar to manage its availability.</p>'; return; }
-
     const [blocked, custom] = await Promise.all([getBlockedSlots(), getCustomSlots()]);
     const fullDayBlock = blocked.find(b => b.type === 'full_day' && b.date === availSelectedDate);
     const timeDocs     = blocked.filter(b => b.type === 'time_slot' && b.date === availSelectedDate);
     const blockedTimes = new Set(timeDocs.map(b => b.time));
     const customDocs   = custom.filter(c => c.date === availSelectedDate);
     const customTimes  = new Set(customDocs.map(c => c.time));
-
-    // After-hours quick-add options — standard times past 5 PM not yet added
     const quickOptions = ['5:30 PM','6:00 PM','6:30 PM','7:00 PM','7:30 PM','8:00 PM','8:30 PM','9:00 PM'].filter(t => !customTimes.has(t));
-
     const dateLabel = new Date(availSelectedDate+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-
     container.innerHTML = `
       <h4 style="color:var(--white);font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:1px;margin-bottom:1rem;">${dateLabel}</h4>
-
       <button class="block-day-btn ${fullDayBlock ? 'is-blocked' : ''}"
         onclick="toggleBlockDay('${availSelectedDate}','${fullDayBlock?._docId||''}')">
         ${fullDayBlock ? '✅ Full Day Blocked — Click to Unblock' : '🚫 Block Entire Day'}
       </button>
-
       <hr class="avail-hr">
       <p class="avail-section-label">Block specific times</p>
       <div class="avail-time-grid">
@@ -997,7 +1195,6 @@ service cloud.firestore {
             ${isBlocked?'🚫 ':''}${t}</button>`;
         }).join('')}
       </div>
-
       <hr class="avail-hr">
       <p class="avail-section-label">Extra hours for this day</p>
       ${customDocs.length > 0 ? customDocs.sort((a,b) => parseTime(a.time)-parseTime(b.time)).map(c =>
@@ -1005,7 +1202,6 @@ service cloud.firestore {
           <span>🕐 ${c.time}</span>
           <button class="custom-slot-remove" onclick="removeCustomSlotFromDate('${c._docId}','${availSelectedDate}')" title="Remove this time">✕</button>
         </div>`).join('') : '<p style="font-size:0.78rem;color:rgba(255,255,255,0.25);margin-bottom:0.5rem;">No extra hours added yet.</p>'}
-
       <div class="add-custom-time">
         <input type="time" id="custom-time-input" step="900" />
         <button class="btn-add-time" onclick="addCustomSlotForDate('${availSelectedDate}')">+ Add</button>
@@ -1013,7 +1209,7 @@ service cloud.firestore {
       ${quickOptions.length > 0 ? `<div class="quick-times">${quickOptions.map(t =>
         `<button class="quick-time-btn" onclick="quickAddCustomSlot('${availSelectedDate}','${t}')">${t}</button>`).join('')}
       </div>` : ''}
-      <p style="font-size:0.7rem;color:rgba(255,255,255,0.22);margin-top:0.6rem;line-height:1.5;">Use the time picker or click a quick-add button to open extra hours on this day. These will appear as available slots for customers to book.</p>
+      <p style="font-size:0.7rem;color:rgba(255,255,255,0.22);margin-top:0.6rem;line-height:1.5;">Use the time picker or click a quick-add button to open extra hours on this day.</p>
     `;
   }
 
@@ -1021,7 +1217,6 @@ service cloud.firestore {
     const input = document.getElementById('custom-time-input');
     if (!input || !input.value) { alert('Please pick a time first.'); return; }
     const timeStr = formatTime(input.value);
-    // Check not already a standard or custom slot
     const custom = await getCustomSlots();
     if (custom.find(c => c.date === ds && c.time === timeStr)) { alert(`${timeStr} is already added for this day.`); return; }
     const ok = await addCustomSlot({ date: ds, time: timeStr });
@@ -1030,7 +1225,7 @@ service cloud.firestore {
 
   async function quickAddCustomSlot(ds, time) {
     const custom = await getCustomSlots();
-    if (custom.find(c => c.date === ds && c.time === time)) return; // already there
+    if (custom.find(c => c.date === ds && c.time === time)) return;
     const ok = await addCustomSlot({ date: ds, time });
     if (ok) { await renderAvailSlots(); await renderAvailCal(); await renderBlockedList(); }
   }
@@ -1049,7 +1244,7 @@ service cloud.firestore {
       const timeBlocks = blocked.filter(b => b.type === 'time_slot' && b.date === ds);
       await Promise.all(timeBlocks.map(b => removeBlockedSlot(b._docId)));
       const ok = await addBlockedSlot({ type: 'full_day', date: ds });
-      if (!ok) return; // error shown by addBlockedSlot
+      if (!ok) return;
     }
     await renderAvailability();
     if (document.getElementById('page-booking').classList.contains('active')) renderCalendar();
@@ -1072,10 +1267,8 @@ service cloud.firestore {
     const todayDs = dateStr(new Date());
     const upcoming = blocked.filter(b => b.date >= todayDs);
     const upcomingCustom = custom.filter(c => c.date >= todayDs);
-
     const allDates = new Set([...upcoming.map(b => b.date), ...upcomingCustom.map(c => c.date)]);
     if (allDates.size === 0) { container.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:0.85rem;text-align:center;padding:1rem 0;">No blocked dates or custom hours.</p>'; return; }
-
     const byDate = {};
     upcoming.forEach(b => {
       if (!byDate[b.date]) byDate[b.date] = { full: null, times: [], custom: [] };
@@ -1085,7 +1278,6 @@ service cloud.firestore {
       if (!byDate[c.date]) byDate[c.date] = { full: null, times: [], custom: [] };
       byDate[c.date].custom.push(c);
     });
-
     container.innerHTML = Object.entries(byDate).sort(([a],[b]) => a.localeCompare(b)).map(([date, data]) => {
       const label = new Date(date+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
       const sortedTimes  = data.times.sort((a,b) => parseTime(a.time)-parseTime(b.time));
@@ -1118,11 +1310,12 @@ service cloud.firestore {
 
   Object.assign(window, {
     showPage, openBooking, changeMonth, selectDate, selectSeat,
-    confirmBooking, closeSuccess, showAdminLogin, doLogin, doLogout,
+    confirmBooking, closeSuccess, clearAddressError, showAdminLogin, doLogin, doLogout,
     adminGoToday, adminCalChangeMonth, deleteAppt,
     switchAdminTab, availChangeMonth,
     toggleBlockDay, toggleBlockTime, unblockDate,
     addCustomSlotForDate, quickAddCustomSlot, removeCustomSlotFromDate,
+    selectRecurringDay, applyRecurringRule, clearRecurringRule, recTypeChange, cancelRecurringEdit,
     scrollToPackages: () => document.getElementById('packages').scrollIntoView({behavior:'smooth'})
   });
 </script>
