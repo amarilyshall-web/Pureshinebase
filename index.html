@@ -494,7 +494,12 @@
             </div>
           </div>
           <div class="admin-cal-grid" id="admin-cal-grid"></div>
-          <p style="font-size:0.7rem;color:rgba(255,255,255,0.25);margin-top:0.8rem;text-align:center;">Click any date to see that day's appointments below.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:1rem;flex-wrap:wrap;gap:0.5rem;">
+            <p style="font-size:0.7rem;color:rgba(255,255,255,0.25);margin:0;">Click any date to see that day's appointments below.</p>
+            <button onclick="exportWeekToICS()" style="background:rgba(74,191,223,0.12);border:1px solid rgba(74,191,223,0.3);color:var(--aqua);padding:0.45rem 1rem;border-radius:6px;font-family:Inter,sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem;" onmouseover="this.style.background='rgba(74,191,223,0.22)'" onmouseout="this.style.background='rgba(74,191,223,0.12)'">
+              📅 Export This Week to Google Calendar
+            </button>
+          </div>
         </div>
         <div class="admin-day-detail">
           <div class="admin-day-detail-title" id="admin-detail-heading">← Select a date above</div>
@@ -1303,12 +1308,88 @@
     if (document.getElementById('page-booking').classList.contains('active')) renderCalendar();
   }
 
+  // ── EXPORT TO ICS ─────────────────────────────────────────────────────
+  async function exportWeekToICS() {
+    // Get Sunday–Saturday of the current week
+    const today = new Date();
+    const sunday = new Date(today);
+    sunday.setDate(today.getDate() - today.getDay());
+    sunday.setHours(0,0,0,0);
+    const saturday = new Date(sunday);
+    saturday.setDate(sunday.getDate() + 6);
+    saturday.setHours(23,59,59,999);
+
+    const sundayDs   = dateStr(sunday);
+    const saturdayDs = dateStr(saturday);
+
+    const appts = await getAppointments();
+    const weekAppts = appts.filter(a => a.date >= sundayDs && a.date <= saturdayDs);
+    weekAppts.sort((a,b) => a.date.localeCompare(b.date) || parseTime(a.time) - parseTime(b.time));
+
+    if (weekAppts.length === 0) {
+      alert('No appointments this week to export.'); return;
+    }
+
+    function toICSDate(dateDs, timeStr) {
+      const [y, m, d] = dateDs.split('-').map(Number);
+      const mins = parseTime(timeStr);
+      const h = Math.floor(mins / 60);
+      const min = mins % 60;
+      return `${String(y)}${String(m).padStart(2,'0')}${String(d).padStart(2,'0')}T${String(h).padStart(2,'0')}${String(min).padStart(2,'0')}00`;
+    }
+    function escICS(str) { return (str||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n'); }
+
+    const lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Pure Shine Detailing//Appointments//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH'
+    ];
+
+    weekAppts.forEach(a => {
+      const start = toICSDate(a.date, a.time);
+      // Default job duration: 2 hours
+      const endMins = parseTime(a.time) + 120;
+      const endH = Math.floor(endMins / 60) % 24;
+      const endM = endMins % 60;
+      const [y, m, d] = a.date.split('-').map(Number);
+      const end = `${y}${String(m).padStart(2,'0')}${String(d).padStart(2,'0')}T${String(endH).padStart(2,'0')}${String(endM).padStart(2,'0')}00`;
+      const desc = [
+        `Package: ${a.package}`,
+        `Phone: ${a.phone}`,
+        `Vehicle: ${a.vehicle || 'Not specified'}`,
+        `Seats: ${a.seats}`,
+        a.notes ? `Notes: ${a.notes}` : null
+      ].filter(Boolean).join('\\n');
+
+      lines.push('BEGIN:VEVENT');
+      lines.push(`DTSTART:${start}`);
+      lines.push(`DTEND:${end}`);
+      lines.push(`SUMMARY:${escICS(a.package)} — Pure Shine Detailing`);
+      lines.push(`LOCATION:${escICS(a.address)}`);
+      lines.push(`DESCRIPTION:${escICS(desc)}`);
+      lines.push(`UID:pureshine-${a.id || Date.now()}-${a.date}`);
+      lines.push('END:VEVENT');
+    });
+
+    lines.push('END:VCALENDAR');
+
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const weekLabel = `${sundayDs}-to-${saturdayDs}`;
+    a.href = url; a.download = `pure-shine-week-${weekLabel}.ics`;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+  }
+
   // ── INIT ──────────────────────────────────────────────────────────────
   renderCalendar();
 
   Object.assign(window, {
     showPage, openBooking, changeMonth, selectDate, selectSeat,
-    confirmBooking, closeSuccess, clearAddressError, showAdminLogin, doLogin, doLogout,
+    confirmBooking, closeSuccess, clearAddressError, showAdminLogin, doLogin, doLogout, exportWeekToICS,
     adminGoToday, adminCalChangeMonth, deleteAppt,
     switchAdminTab, availChangeMonth,
     toggleBlockDay, toggleBlockTime, unblockDate,
